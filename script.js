@@ -1,10 +1,3 @@
-const cells = Array.from(document.querySelectorAll('.cell'));
-const statusText = document.getElementById('status-text');
-const restartButton = document.getElementById('restart-button');
-const scoreX = document.getElementById('score-x');
-const scoreO = document.getElementById('score-o');
-const scoreDraws = document.getElementById('score-draws');
-
 const winningCombos = [
   [0, 1, 2],
   [3, 4, 5],
@@ -19,20 +12,29 @@ const winningCombos = [
 let board = Array(9).fill('');
 let currentPlayer = 'X';
 let gameOver = false;
-let scores = {
-  X: 0,
-  O: 0,
-  draws: 0,
-};
+let scores = { X: 0, O: 0, draws: 0 };
+
+function getGameElements() {
+  return {
+    cells: Array.from(document.querySelectorAll('.cell')),
+    statusText: document.getElementById('status-text'),
+    restartButton: document.getElementById('restart-button'),
+    scoreX: document.getElementById('score-x'),
+    scoreO: document.getElementById('score-o'),
+    scoreDraws: document.getElementById('score-draws'),
+  };
+}
 
 function updateScores() {
-  scoreX.textContent = scores.X;
-  scoreO.textContent = scores.O;
-  scoreDraws.textContent = scores.draws;
+  const { scoreX, scoreO, scoreDraws } = getGameElements();
+  if (scoreX) scoreX.textContent = String(scores.X);
+  if (scoreO) scoreO.textContent = String(scores.O);
+  if (scoreDraws) scoreDraws.textContent = String(scores.draws);
 }
 
 function setStatus(message) {
-  statusText.textContent = message;
+  const { statusText } = getGameElements();
+  if (statusText) statusText.textContent = message;
 }
 
 function checkWinner() {
@@ -46,17 +48,19 @@ function checkWinner() {
   return null;
 }
 
+function setBoardDisabled(disabled) {
+  const { cells } = getGameElements();
+  cells.forEach((cell) => {
+    cell.disabled = disabled;
+  });
+}
+
 function handleWin(winner) {
   gameOver = true;
   scores[winner] += 1;
   updateScores();
   setStatus(`Player ${winner} wins!`);
-
-  cells.forEach((cell) => {
-    if (!cell.disabled) {
-      cell.disabled = true;
-    }
-  });
+  setBoardDisabled(true);
 }
 
 function handleDraw() {
@@ -64,12 +68,7 @@ function handleDraw() {
   scores.draws += 1;
   updateScores();
   setStatus("It's a draw!");
-
-  cells.forEach((cell) => {
-    if (!cell.disabled) {
-      cell.disabled = true;
-    }
-  });
+  setBoardDisabled(true);
 }
 
 function switchPlayer() {
@@ -80,8 +79,9 @@ function switchPlayer() {
 function handleCellClick(event) {
   const cell = event.currentTarget;
   const index = Number(cell.dataset.index);
+  const { cells } = getGameElements();
 
-  if (board[index] || gameOver) {
+  if (!cell || board[index] || gameOver) {
     return;
   }
 
@@ -110,6 +110,7 @@ function resetBoard() {
   currentPlayer = 'X';
   gameOver = false;
 
+  const { cells } = getGameElements();
   cells.forEach((cell) => {
     cell.textContent = '';
     cell.classList.remove('x', 'o');
@@ -119,11 +120,24 @@ function resetBoard() {
   setStatus("Player X's turn");
 }
 
-cells.forEach((cell) => {
-  cell.addEventListener('click', handleCellClick);
-});
+function initGame() {
+  const { cells, restartButton } = getGameElements();
 
-restartButton.addEventListener('click', resetBoard);
+  if (!cells.length || !restartButton) {
+    return;
+  }
 
-updateScores();
-setStatus("Player X's turn");
+  cells.forEach((cell) => {
+    cell.addEventListener('click', handleCellClick);
+  });
+
+  restartButton.addEventListener('click', resetBoard);
+  updateScores();
+  setStatus("Player X's turn");
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initGame);
+} else {
+  initGame();
+}
