@@ -1,0 +1,88 @@
+body {
+  background: linear-gradient(135deg, #eef5ff 0%, #f9f7ff 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.game-card {
+  width: min(100%, 700px);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+.status-box .badge {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(80px, 1fr));
+  gap: 0.75rem;
+  max-width: 420px;
+}
+
+.cell {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #f1f5ff 0%, #eaf0ff 100%);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #1c2a48;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 6px 18px rgba(41, 98, 255, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cell:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 10px 22px rgba(41, 98, 255, 0.12);
+}
+
+.cell:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.cell.x {
+  color: #0d6efd;
+}
+
+.cell.o {
+  color: #198754;
+}
+
+.score-box {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.9rem;
+  padding: 1rem 0.5rem;
+}
+
+.score-box .label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6c757d;
+  margin-bottom: 0.4rem;
+}
+
+.score-box strong {
+  font-size: 2rem;
+  color: #111827;
+}
+
+@media (max-width: 576px) {
+  .board {
+    gap: 0.55rem;
+  }
+
+  .game-card {
+    border-radius: 1rem;
+  }
+}
